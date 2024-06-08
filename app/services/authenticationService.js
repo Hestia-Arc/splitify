@@ -1,14 +1,14 @@
-const ULID = require("ulid");
+// const ULID = require("ulid");
 const jwt = require("jsonwebtoken");
 const { format } = require("date-fns");
-const { hashPassword, compareHash } = require("./../utilities/hash");
+const { hashPassword, compareHash } = require("../utilities/hash");
 const { generateKeys } = require("../utilities/keygenerator");
 const User = require("../models/userModel");
 const ResourceExists = require("../errors/ResourceExisits");
 const AuthenticationError = require("../errors/AuthenticationError");
 
 async function registerUser(userData) {
-  const { username, email, password } = userData;
+  const { fullname, email, password } = userData;
 
   const existingUser = await User.findOne({ email });
 
@@ -23,7 +23,7 @@ async function registerUser(userData) {
   let hashedPassword = await hashPassword(password);
 
   const newUser = await User.create({
-    username,
+    fullname,
     email,
     password: hashedPassword,
   });
@@ -84,21 +84,19 @@ async function login(email, password) {
 
   const token = jwt.sign(
     {
+      fullname: user.fullname,
       email: user?.email,
-      username: user.username,
-      id: user.id,
+      id: user._id,
     },
     process.env.APP_KEY,
     { expiresIn: 60 * 30, issuer: process.env.JWT_ISSUER }
   );
 
   return {
-    id: user.id,
+    id: user._id,
+    fullname: user.fullname,
     email: user.email,
-    username: user.username,
-    first_name: user.first_name,
-    last_name: user.last_name,
-    created_at: user.created_at,
+    // created_at: user.created_at,
     token: token,
   };
 }
