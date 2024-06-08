@@ -1,35 +1,21 @@
-const { MongoClient } = require('mongodb')
+const mongoose = require("mongoose");
 
-let host = process.env.DB_HOST;
+let database = process.env.MONGODB_URI;
 
-let port = process.env.DB_PORT;
-
-let protocol = process.env.DB_CONNECTION;
-
-let databaseName = process.env.DB_DATABASE;
-
-if (! host || ! port || ! protocol || ! databaseName) {
-    throw new Error('One or more required environment variables (DB_HOST, DB_PORT, DB_CONNECTION, DB_DATABASE) are missing or empty.');
+if (!database) {
+  throw new Error(
+    "One environment variable ( MONGODB_URI) is missing or empty."
+  );
 }
 
-let databaseString = `${protocol}://${host}:${port}`
+mongoose
+  .connect(database)
+  .then(() => {
+    // logger.info(`DB Connection Established`);
+    console.log("DB Connected");
+  })
+  .catch((err) => {
+    // logger.error(`DB Connection Fail | ${err.stack}`);
+    console.log(err);
+  });
 
-const client = new MongoClient(databaseString);
-
-async function connect(collection) {
-    try {
-        const connection = await client.connect();
-
-        const db = connection.db(databaseName)
-
-        return db.collection(collection)
-    } catch (error) {
-        console.log(`Error connecting to MongoDB: ${error}`)
-
-        throw error;
-    }
-}
-
-module.exports = {
-    connect
-};
