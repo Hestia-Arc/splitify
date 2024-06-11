@@ -1,9 +1,9 @@
 const service = require("../services/expensesService");
 
-// ------------------- GET ALL
+// ------------------- GET ALL...done
 async function index(request, response) {
   try {
-    const results = await service.getExpenses();
+    const results = await service.getExpenses(request.params.owner);
 
     response.json({ data: results });
   } catch (error) {
@@ -13,10 +13,10 @@ async function index(request, response) {
   }
 }
 
-// ------------------- GET AN EXPENSE
+// ------------------- GET AN EXPENSE ...done
 async function show(request, response) {
   try {
-    const result = await service.getPost(request.params.post);
+    const result = await service.getExpense(request.params);
 
     response.json({ data: result });
   } catch (error) {
@@ -28,10 +28,10 @@ async function show(request, response) {
   }
 }
 
-// ------------------- SAVE
+// ------------------- SAVE..done
 async function store(request, response) {
   try {
-    const result = await service.createPost(request.body);
+    const result = await service.createExpense(request.body);
 
     response.status(201).json({ data: result });
   } catch (error) {
@@ -43,12 +43,12 @@ async function store(request, response) {
   }
 }
 
-// ------------------- UPDATE
+// ------------------- UPDATE ....done
 async function update(request, response) {
   try {
-    const result = await service.createPost(request.body);
+    const result = await service.updateExpense(request.params, request.body);
 
-    response.status(201).json({ data: result });
+    response.status(201).json(result);
   } catch (error) {
     console.log(`Error querying database: ${error}`);
 
@@ -58,12 +58,12 @@ async function update(request, response) {
   }
 }
 
-// ------------------- REMOVE
+// ------------------- REMOVE ... done
 async function remove(request, response) {
   try {
-    const result = await service.createPost(request.body);
+    const result = await service.deleteExpense(request.params);
 
-    response.status(201).json({ data: result });
+    response.status(200).json(result);
   } catch (error) {
     console.log(`Error querying database: ${error}`);
 

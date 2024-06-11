@@ -10,5 +10,23 @@ router.post('/auth/login', validateLoginRequest, authController.login);
 // router.post('/auth/logout', validateLoginRequest, authController.login);
 
 
+ router.get("/user/:id", authController.history);
+
+// router.get("/user/:id", checkAuth, async (req, res) => {
+//     const user = await User.findOne({ email: req.user }).populate("friends");
+  
+//     return res.json({
+//       errors: [],
+//       data: {
+//         user: {
+//           id: user?._id,
+//           email: user?.email,
+//           username: user?.username,
+//           friends: [],
+//           expenses: []
+//         },
+//       },
+//     });
+//   });
 
 module.exports = router;

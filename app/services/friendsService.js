@@ -3,8 +3,8 @@ const Expense = require("../models/expenseModel");
 const NotFound = require("../errors/NotFound");
 const { format } = require("date-fns");
 
-// -------------------- ALL EXPENSES ...done
-async function getExpenses(owner) {
+// -------------------- ALL FRIENDS
+async function getFriends(owner) {
   let userExpense = await Expense.find({
     owner: owner,
   });
@@ -21,8 +21,8 @@ async function getExpenses(owner) {
   return userExpense;
 }
 
-// -------------------- ONE EXPENSE...done
-async function getExpense(req) {
+// -------------------- ONE FRIEND...
+async function getFriend(req) {
   const result = await Expense.findOne({
     owner: req.owner,
     _id: req.id,
@@ -35,8 +35,8 @@ async function getExpense(req) {
   return result;
 }
 
-// -------------------- CREATE EXPENSE...done
-async function createExpense(expData) {
+// -------------------- CREATE FRIEND...
+async function createFriend(expData) {
   // const today = new Date();
 
   const newExpense = await Expense.create(expData);
@@ -44,8 +44,8 @@ async function createExpense(expData) {
   return newExpense;
 }
 
-// -------------------- UPDATE EXPENSE...done
-async function updateExpense(params, body) {
+// -------------------- UPDATE FRIEND
+async function updateFriend(params, body) {
   const result = await Expense.findOne({
     owner: params.owner,
     _id: params.id,
@@ -68,8 +68,8 @@ async function updateExpense(params, body) {
   return { msg: "Expense updated successfully" };
 }
 
-// -------------------- DELETE EXPENSE ...done
-async function deleteExpense(params) {
+// -------------------- DELETE FRIEND
+async function deleteFriend(params) {
   const result = await Expense.findOne({
     owner: params.owner,
     _id: params.id,
@@ -79,7 +79,7 @@ async function deleteExpense(params) {
     throw new NotFound("Expense not found.");
   }
 
-const deleteExpense = await Expense.deleteOne({
+  var deleteExpense = await Expense.deleteOne({
     owner: params.owner,
     _id: params.id,
   });
@@ -90,9 +90,9 @@ const deleteExpense = await Expense.deleteOne({
 // --------------------
 
 module.exports = {
-  getExpenses,
-  getExpense,
-  createExpense,
-  updateExpense,
-  deleteExpense,
+  getFriends,
+  getFriend,
+  createFriend,
+  updateFriend,
+  deleteFriend,
 };

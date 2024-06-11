@@ -7,6 +7,8 @@ const User = require("../models/userModel");
 const ResourceExists = require("../errors/ResourceExisits");
 const AuthenticationError = require("../errors/AuthenticationError");
 
+
+// ================ SAVE USER ...done
 async function registerUser(userData) {
   const { fullname, email, password } = userData;
 
@@ -26,6 +28,8 @@ async function registerUser(userData) {
     fullname,
     email,
     password: hashedPassword,
+    friends: [],
+    expenses: []
   });
 
   const result = {
@@ -69,6 +73,8 @@ async function registerUser(userData) {
   return result;
 }
 
+
+// =================== LOGIN USER
 async function login(email, password) {
   const user = await User.findOne({ email });
 
@@ -84,9 +90,10 @@ async function login(email, password) {
 
   const token = jwt.sign(
     {
+      id: user._id,
       fullname: user.fullname,
       email: user?.email,
-      id: user._id,
+      
     },
     process.env.APP_KEY,
     { expiresIn: 60 * 30, issuer: process.env.JWT_ISSUER }
@@ -101,7 +108,25 @@ async function login(email, password) {
   };
 }
 
+// ====================== HISTORY  ....done
+async function userHistory(req) {
+  const user = await User.findOne({ _id: req }).populate("expenses");
+
+  if (user === null) {
+    throw new AuthenticationError("User credentials do not match our records");
+  }
+
+  return {
+    id: user._id,
+    fullname: user.fullname,
+    email: user.email,
+    friends: user.friends,
+    expenses: user.expenses
+  };
+}
+
 module.exports = {
   registerUser,
   login,
+  userHistory
 };

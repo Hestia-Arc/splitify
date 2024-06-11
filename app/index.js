@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use("/", authRouter);
-app.use("/expenses", expensesRouter);
+app.use("/", expensesRouter);
 // app.use("/friends", friendsRouter);
 app.use("/users", usersRouter);
 
