@@ -3,8 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon server",
-    "build": "[my-framework] build --output public"
+    "start": "nodemon server"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
