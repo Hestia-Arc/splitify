@@ -15,10 +15,11 @@ async function register(request, response) {
   }
 }
 
+// ============================ login
 async function login(request, response) {
   try {
     const results = await service.login(
-      request.body.username_or_email,
+      request.body.email,
       request.body.password
     );
 

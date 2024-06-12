@@ -25,7 +25,7 @@ async function getExpenses(owner) {
 async function getExpense(req) {
   const result = await Expense.findOne({
     owner: req.owner,
-    _id: req.id,
+    id: req.id,
   });
 
   if (result === null) {
@@ -48,7 +48,7 @@ async function createExpense(expData) {
 async function updateExpense(params, body) {
   const result = await Expense.findOne({
     owner: params.owner,
-    _id: params.id,
+    id: params.id,
   });
 
   if (result === null) {
@@ -58,7 +58,7 @@ async function updateExpense(params, body) {
   const expenseUpdate = await Expense.updateOne(
     {
       owner: params.owner,
-      _id: params.id,
+      id: params.id,
     },
     {
       $set: body,
@@ -72,7 +72,7 @@ async function updateExpense(params, body) {
 async function deleteExpense(params) {
   const result = await Expense.findOne({
     owner: params.owner,
-    _id: params.id,
+    id: params.id,
   });
 
   if (result === null) {
@@ -81,7 +81,7 @@ async function deleteExpense(params) {
 
 const deleteExpense = await Expense.deleteOne({
     owner: params.owner,
-    _id: params.id,
+    id: params.id,
   });
 
   return { msg: "Expense deleted successfully" };

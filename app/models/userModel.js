@@ -3,6 +3,10 @@ const { Schema } = mongoose;
 
 
 const userSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    required: true,
+  },
   fullname: {
     type: String,
     required: true,
