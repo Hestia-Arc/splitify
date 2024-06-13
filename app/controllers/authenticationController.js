@@ -36,7 +36,7 @@ async function login(request, response) {
 // ============================= get user data  ...done
 async function history(request, response) {
   try {
-    const results = await service.userHistory(request.params.id);
+    const results = await service.userHistory(request);
 
     response.json({ data: results });
   } catch (error) {

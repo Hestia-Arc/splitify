@@ -1,5 +1,6 @@
-// const ULID = require("ulid");
+const ULID = require("ulid");
 const Expense = require("../models/expenseModel");
+const User = require("../models/userModel");
 const NotFound = require("../errors/NotFound");
 const { format } = require("date-fns");
 
@@ -14,10 +15,9 @@ async function getExpenses(owner) {
   // });
 
   if (userExpense.length === 0) {
-    let err = new Error("No expense present for the user");
-    err.status = 400;
-    throw err;
+    throw new NotFound("No expense found for this user.");
   }
+
   return userExpense;
 }
 
@@ -25,7 +25,7 @@ async function getExpenses(owner) {
 async function getExpense(req) {
   const result = await Expense.findOne({
     owner: req.owner,
-    id: req.id,
+    _id: req.id,
   });
 
   if (result === null) {
@@ -36,19 +36,48 @@ async function getExpense(req) {
 }
 
 // -------------------- CREATE EXPENSE...done
-async function createExpense(expData) {
-  // const today = new Date();
+async function createExpense(data, identifier) {
+  const newExpense = new Expense(data);
 
-  const newExpense = await Expense.create(expData);
+  newExpense.save();
 
-  return newExpense;
+  const result = await User.findByIdAndUpdate(
+    identifier,
+    { $push: { expenses: newExpense._id } },
+    { new: true, upsert: true }
+  )
+    .then((user) => {
+      return user;
+    })
+    .catch((error) => {
+      return error;
+    });
+
+  return { message: "Expense created successfully" };
+
+  // const newExpense = await Expense.create({
+  //   id: ULID.ulid(),
+  //   owner: data.owner,
+  //   date: data.date,
+  //   title: data.title,
+  //   description: data.description,
+  //   amount: data.amount,
+  //   currency: data.currency,
+  //   category: data.category,
+  //   members: data.members,
+  //   expenseType: data.expenseType,
+
+  // }
+  // );
+
+  // return newExpense;
 }
 
 // -------------------- UPDATE EXPENSE...done
 async function updateExpense(params, body) {
   const result = await Expense.findOne({
     owner: params.owner,
-    id: params.id,
+    _id: params.id,
   });
 
   if (result === null) {
@@ -58,33 +87,33 @@ async function updateExpense(params, body) {
   const expenseUpdate = await Expense.updateOne(
     {
       owner: params.owner,
-      id: params.id,
+      _id: params.id,
     },
     {
       $set: body,
     }
   );
 
-  return { msg: "Expense updated successfully" };
+  return { message: "Expense updated successfully" };
 }
 
 // -------------------- DELETE EXPENSE ...done
 async function deleteExpense(params) {
   const result = await Expense.findOne({
     owner: params.owner,
-    id: params.id,
+    _id: params.id,
   });
 
   if (result === null) {
     throw new NotFound("Expense not found.");
   }
 
-const deleteExpense = await Expense.deleteOne({
+  const deleteExpense = await Expense.deleteOne({
     owner: params.owner,
-    id: params.id,
+    _id: params.id,
   });
 
-  return { msg: "Expense deleted successfully" };
+  return { message: "Expense deleted successfully" };
 }
 
 // --------------------

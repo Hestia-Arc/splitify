@@ -1,6 +1,6 @@
-const ULID = require("ulid");
+// const ULID = require("ulid");
 const jwt = require("jsonwebtoken");
-const { addSeconds, getTime, format, formatISO } = require('date-fns');
+const { addSeconds, getTime, format, formatISO } = require("date-fns");
 const { hashPassword, compareHash } = require("../utilities/hash");
 const { generateKeys } = require("../utilities/keygenerator");
 const User = require("../models/userModel");
@@ -15,16 +15,13 @@ async function registerUser(userData) {
 
   if (existingUser) {
     throw new ResourceExists(
-      "A user with the provided username or email address exists"
+      "A user with the provided email address exists"
     );
   }
-
-  const today = new Date();
 
   let hashedPassword = await hashPassword(password);
 
   const newUser = await User.create({
-    id: ULID.ulid(),
     fullname,
     email,
     password: hashedPassword,
@@ -33,8 +30,10 @@ async function registerUser(userData) {
   });
 
   const result = {
-    id: newUser.id,
+    id: newUser._id,
     email: newUser.email,
+    createdAt: newUser.createdAt,
+    updatedAt: newUser.updatedAt,
   };
 
   return result;
@@ -54,10 +53,9 @@ async function login(email, password) {
     throw new AuthenticationError("User credentials do not match our records");
   }
 
-
   const token = jwt.sign(
     {
-      id: user.id,
+      id: user._id,
       fullname: user.fullname,
       email: user.email,
     },
@@ -69,7 +67,7 @@ async function login(email, password) {
 
   return {
     user: {
-      id: user.id,
+      id: user._id,
       fullname: user.fullname,
       email: user.email,
     },
@@ -79,14 +77,24 @@ async function login(email, password) {
   };
 }
 
-
-
-
-
-
 // ====================== HISTORY  ....done
-async function userHistory(req) {
-  const user = await User.findOne({ id: req }).populate("expenses");
+async function userHistory(request) {
+  // console.log(request.user);
+
+  // const user = await User.findOne({ id: request.user })
+  //   .populate("expenses")
+  //   .then((userP) => {
+  //     // console.log("Populated User" + expenses);
+  //     return userP;
+  //   });
+
+  const user = await User.findByIdAndUpdate(request.user)
+    .populate("expenses")
+    .then((userData) => {
+      console.log("Populated User");
+      return userData;
+    });
+
 
   if (user === null) {
     throw new AuthenticationError("User credentials do not match our records");
@@ -94,13 +102,16 @@ async function userHistory(req) {
 
   return {
     id: user.id,
-    fullname: user.fullname,
     email: user.email,
+    fullname: user.fullname,
     friends: user.friends,
     expenses: user.expenses,
+    createdAt: user.createdAt,
+    updatedAt:user.updatedAt
   };
-}
 
+}
+``
 module.exports = {
   registerUser,
   login,

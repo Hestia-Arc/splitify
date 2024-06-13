@@ -31,7 +31,7 @@ async function show(request, response) {
 // ------------------- SAVE..done
 async function store(request, response) {
   try {
-    const result = await service.createExpense(request.body);
+    const result = await service.createExpense(request.body, request.params.id);
 
     response.status(201).json({ data: result });
   } catch (error) {
