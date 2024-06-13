@@ -1,9 +1,9 @@
-const service = require("../services/expensesService");
+const service = require("../services/friendsService");
 
 // ------------------- GET ALL...done
 async function index(request, response) {
   try {
-    const results = await service.getExpenses(request.params.owner);
+    const results = await service.getFriends(request.params.owner);
 
     response.json({ data: results });
   } catch (error) {
@@ -13,10 +13,10 @@ async function index(request, response) {
   }
 }
 
-// ------------------- GET AN EXPENSE ...done
+// ------------------- GET A FRIEND ...done
 async function show(request, response) {
   try {
-    const result = await service.getExpense(request.params);
+    const result = await service.getFriend(request.params);
 
     response.json({ data: result });
   } catch (error) {
@@ -31,7 +31,7 @@ async function show(request, response) {
 // ------------------- SAVE..done
 async function store(request, response) {
   try {
-    const result = await service.createExpense(request.body);
+    const result = await service.createFriend(request.body, request.params.id);
 
     response.status(201).json({ data: result });
   } catch (error) {
@@ -46,7 +46,7 @@ async function store(request, response) {
 // ------------------- UPDATE
 async function update(request, response) {
   try {
-    const result = await service.updateExpense(request.params, request.body);
+    const result = await service.updateFriend(request.params, request.body);
 
     response.status(201).json(result);
   } catch (error) {
@@ -61,7 +61,7 @@ async function update(request, response) {
 // ------------------- REMOVE
 async function remove(request, response) {
   try {
-    const result = await service.deleteExpense(request.params);
+    const result = await service.deleteFriend(request.params);
 
     response.status(200).json(result);
   } catch (error) {

@@ -89,7 +89,7 @@ async function userHistory(request) {
   //   });
 
   const user = await User.findByIdAndUpdate(request.user)
-    .populate("expenses")
+    .populate("expenses").populate("friends")
     .then((userData) => {
       console.log("Populated User");
       return userData;

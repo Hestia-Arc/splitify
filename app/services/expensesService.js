@@ -1,4 +1,4 @@
-const ULID = require("ulid");
+// const ULID = require("ulid");
 const Expense = require("../models/expenseModel");
 const User = require("../models/userModel");
 const NotFound = require("../errors/NotFound");
@@ -22,10 +22,10 @@ async function getExpenses(owner) {
 }
 
 // -------------------- ONE EXPENSE...done
-async function getExpense(req) {
+async function getExpense(request) {
   const result = await Expense.findOne({
-    owner: req.owner,
-    _id: req.id,
+    owner: request.owner,
+    _id: request.id,
   });
 
   if (result === null) {

@@ -1,61 +1,69 @@
 // const ULID = require("ulid");
-const Expense = require("../models/expenseModel");
+const Friend = require("../models/friendModel");
+const User = require("../models/userModel");
 const NotFound = require("../errors/NotFound");
 const { format } = require("date-fns");
 
-// -------------------- ALL FRIENDS
+// -------------------- ALL FRIENDS....
 async function getFriends(owner) {
-  let userExpense = await Expense.find({
+  let userFriend = await Friend.find({
     owner: owner,
   });
 
-  // .sort({
-  //   date: -1, //to get the newest first
-  // });
-
-  if (userExpense.length === 0) {
-    let err = new Error("No expense present for the user");
-    err.status = 400;
-    throw err;
+  if (userFriend.length === 0) {
+    throw new NotFound("User has no friend yet");
+    
   }
-  return userExpense;
+  return userFriend;
 }
 
 // -------------------- ONE FRIEND...
-async function getFriend(req) {
-  const result = await Expense.findOne({
-    owner: req.owner,
-    _id: req.id,
+async function getFriend(request) {
+  const result = await Friend.findOne({
+    owner: request.owner,
+    _id: request.id,
   });
 
   if (result === null) {
-    throw new NotFound("Expense not found.");
+    throw new NotFound("Friend not found.");
   }
 
   return result;
 }
 
 // -------------------- CREATE FRIEND...
-async function createFriend(expData) {
-  // const today = new Date();
+async function createFriend(data, identifier) {
+  const newFriend = new Friend(data);
 
-  const newExpense = await Expense.create(expData);
+  newFriend.save();
 
-  return newExpense;
+  const result = await User.findByIdAndUpdate(
+    identifier,
+    { $push: { friends: newFriend._id } },
+    { new: true, upsert: true }
+  )
+    .then((user) => {
+      return user;
+    })
+    .catch((error) => {
+      return error;
+    });
+
+  return { message: "Friend created successfully" };
 }
 
 // -------------------- UPDATE FRIEND
 async function updateFriend(params, body) {
-  const result = await Expense.findOne({
+  const result = await Friend.findOne({
     owner: params.owner,
     _id: params.id,
   });
 
   if (result === null) {
-    throw new NotFound("Expense not found.");
+    throw new NotFound("Friend not found.");
   }
 
-  const expenseUpdate = await Expense.updateOne(
+  const friendUpdate = await Friend.updateOne(
     {
       owner: params.owner,
       _id: params.id,
@@ -65,26 +73,26 @@ async function updateFriend(params, body) {
     }
   );
 
-  return { msg: "Expense updated successfully" };
+  return { msg: "Friend updated successfully" };
 }
 
 // -------------------- DELETE FRIEND
 async function deleteFriend(params) {
-  const result = await Expense.findOne({
+  const result = await Friend.findOne({
     owner: params.owner,
     _id: params.id,
   });
 
   if (result === null) {
-    throw new NotFound("Expense not found.");
+    throw new NotFound("Friend not found.");
   }
 
-  var deleteExpense = await Expense.deleteOne({
+  var deleteFriend = await Friend.deleteOne({
     owner: params.owner,
     _id: params.id,
   });
 
-  return { msg: "Expense deleted successfully" };
+  return { msg: "Friend deleted successfully" };
 }
 
 // --------------------

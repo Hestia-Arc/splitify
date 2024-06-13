@@ -8,16 +8,19 @@ const friendSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    unique: true,
   },
   email: {
     type: String,
     required: true,
+    unique: true,
   },
   image: {
     type: String,
     default: "No Image",
   },
+},
+{
+  timestamps: true,
 });
 
 const Friend = mongoose.model("Friend", friendSchema);

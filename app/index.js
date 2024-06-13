@@ -7,8 +7,7 @@ require("../config/database");
 
 const authRouter = require("./routes/auth");
 const expensesRouter = require("./routes/expenses");
-// const friendsRouter = require("./routes/friends");
-const usersRouter = require("./routes/users");
+const friendsRouter = require("./routes/friends");
 
 const app = express();
 
@@ -19,8 +18,7 @@ app.use(cookieParser());
 
 app.use("/", authRouter);
 app.use("/", expensesRouter);
-// app.use("/friends", friendsRouter);
-app.use("/users", usersRouter);
+app.use("/", friendsRouter);
 
 
 module.exports = app;
